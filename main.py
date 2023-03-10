@@ -202,6 +202,8 @@ def lab1():
     b_vector = Matrix(1, matrix.get_rows_count())
     s.matrix_elements_input(b_vector, "ввод элементов вектора B")
 
+    epsilon = s.float_input("ввод эпсилон")
+
     def gauss_zeydel(input_m: Matrix, b: list, epsilon=0.001):
         m = input_m.copy()
         rows = m.get_rows_count()
@@ -211,6 +213,7 @@ def lab1():
         if len(b) < rows:
             raise Exception("размерность вектора B не подходит")
 
+        # приведение к диагональному преобладанию
         for i in range(rows - 1):
             max_el_abs = abs(m.get(i, i))
             best_row = i
@@ -231,16 +234,24 @@ def lab1():
             if max_el_abs < 0.0000000001:
                 raise Exception("нулевой столбец")
 
+        strong_diagonal = True
+        for i in range(rows):
+            row_sum = sum([abs(m.get(i, j)) for j in range(rows)]) - abs(m.get(i, i))
+            if abs(m.get(i, i)) < row_sum:
+                strong_diagonal = False
+                break
+
+        if strong_diagonal:
+            print_info("диагональное преобладание **присутствует**")
+        else:
+            print_info("диагональное преобладание **отсутствует**")
+
         for i in range(rows):
             el = m.get(i, i)
             m.set_row(i, [(j / el) for j in m.get_row(i)])
             b[i] = b[i] / el
 
             m.set(i, i, 0)
-
-        # тут можно поискать норму
-
-        print_info(m)
 
         x1 = b.copy()
         running = True
@@ -255,18 +266,20 @@ def lab1():
                     x1[i] -= m.get(i, j) * x0[j]
 
             c += 1
-            print_info(f"iter = {c}\nx0 = {x0}\nx1 = {x1}")
+            # print_info(f"iter = {c}\nx0 = {x0}\nx1 = {x1}")
 
             for i in range(rows):
                 running = running and (abs(x1[i] - x0[i]) <= epsilon)
             running = not running
 
-        return x1
+        return x1, [abs(x1[i] - x0[i]) for i in range(rows)]
 
     x = Matrix(1, matrix.get_rows_count(), 9)
-    x.set_row(0, gauss_zeydel(matrix, b_vector.get_row(0), 0.01))
 
-    print_info("Ответ: x =", x)
+    x_ans, errors = gauss_zeydel(matrix, b_vector.get_row(0), epsilon)
+    x.set_row(0, x_ans)
+
+    print_info(f"Ответ: x = {x}. Вектор погрешностей: {errors}")
     print_info("Проверка.\n", f"Ax = {x * matrix}\n", f"B = {b_vector}")
 
 
