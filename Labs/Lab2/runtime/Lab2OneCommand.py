@@ -7,6 +7,10 @@ import math
 import matplotlib.pyplot as plt
 
 
+def continue_search(f, x, iter, epsilon, big_f_num, big_x_num, max_iter):
+    return (abs(f(x)) < big_f_num) and (abs(f(x)) > epsilon) and (iter < max_iter) and (x < big_x_num)
+
+
 def lab2_interval_input(io: MyInputOutputStream):
     while True:
         try:
@@ -27,12 +31,12 @@ def lab2_interval_input(io: MyInputOutputStream):
             io.output.error_msg(e.__str__())
 
 
-def half_division_method(equation=lambda x: x, a=0.0, b=0.0, epsilon=0.01):
+def half_division_method(equation=lambda x: x, a=0.0, b=0.0, epsilon=0.001):
     result = Table(head=["Номер шага", "a", "b", "x", "f(x)"])
 
     x = a
     iters_count = 0
-    while (abs(equation(x)) > epsilon) and (x < 10000) and (abs(equation(x)) < 10000):
+    while True:
         iters_count += 1
         x = (a + b) / 2
 
@@ -43,15 +47,18 @@ def half_division_method(equation=lambda x: x, a=0.0, b=0.0, epsilon=0.01):
         else:
             b = x
 
+        if not continue_search(equation, x, iters_count, epsilon, 1000000000, 10000, 100):
+            break
+
     return result
 
 
-def secant_method(equation=lambda x: x, x1=0.0, x2=0.0, epsilon=0.01):
+def secant_method(equation=lambda x: x, x1=0.0, x2=0.0, epsilon=0.001):
     result = Table(head=["Номер шага", "x_k-1", "x_k", "x_k+1", "f(x_k+1)"])
 
     x3 = x1
     iters_count = 0
-    while (abs(equation(x3)) > epsilon) and (x3 < 10000) and (abs(equation(x3)) < 10000):
+    while True:
         iters_count += 1
 
         x3 = x2 - (x2 - x1) / (equation(x2) - equation(x1)) * equation(x2)
@@ -59,10 +66,13 @@ def secant_method(equation=lambda x: x, x1=0.0, x2=0.0, epsilon=0.01):
         x1 = x2
         x2 = x3
 
+        if not continue_search(equation, x3, iters_count, epsilon, 1000000000, 10000, 100):
+            break
+
     return result
 
 
-def simple_iter_method(equation=lambda x: x, derivative=lambda x: x, a=0.0, b=0.0, epsilon=0.01):
+def simple_iter_method(equation=lambda x: x, derivative=lambda x: x, a=0.0, b=0.0, epsilon=0.001):
     result = Table(head=["Номер шага", "x_k", "x_k+1", "f(x_k+1)"])
 
     lda = -1 / max([abs(derivative(a + i * (b - a) / 100)) for i in range(101)])
@@ -71,11 +81,14 @@ def simple_iter_method(equation=lambda x: x, derivative=lambda x: x, a=0.0, b=0.
     x1 = b
     x2 = x1
     iters_count = 0
-    while (abs(equation(x2)) > epsilon) and (x2 < 10000) and (abs(equation(x2)) < 10000):
+    while True:
         iters_count += 1
         x2 = phi(x1)
         result.add_row([iters_count, x1, x2, equation(x2)])
         x1 = x2
+
+        if not continue_search(equation, x2, iters_count, epsilon, 1000000000, 10000, 100):
+            break
 
     return result
 
@@ -115,6 +128,18 @@ class Lab2OneCommand(AnyCommand):
         equation = self.equations_list[equation_n]
         a, b = 0, 0
 
+        # show plot
+
+        x_values = [-5 + i / 10 for i in range(101)]
+        y_values = [equation.derivative(0)(i) for i in x_values]
+
+        plt.grid(visible=True)
+        plt.plot(x_values, y_values)
+        plt.plot(x_values, [0 for i in x_values])
+        plt.show()
+
+        # calcs
+
         while True:
             try:
                 # enter a, b
@@ -151,14 +176,25 @@ class Lab2OneCommand(AnyCommand):
         SI_table = simple_iter_method(equation.derivative(0), equation.derivative(1), a, b)
         io.output.info_msg(f"Метод простой итерации: {SI_table}")
 
-        a = a - 1
-        b = b + 1
+        x_dots = [HD_table.get_col(3)[-1], S_table.get_col(3)[-1], SI_table.get_col(2)[-1]]
+        y_dots = [HD_table.get_col(4)[-1], S_table.get_col(4)[-1], SI_table.get_col(3)[-1]]
+
+        xlen = max(max(x_dots) - min(x_dots), 5) + 2
+        a = (min(x_dots) + max(x_dots) - xlen) / 2
+        b = a + xlen
         x_values = [a + i * (b - a) / 100 for i in range(101)]
         y_values = [equation.derivative(0)(i) for i in x_values]
 
         plt.grid(visible=True)
         plt.plot(x_values, y_values)
         plt.plot(x_values, [0 for i in x_values])
+
+        # dots
+
+        plt.plot([x_dots[0]], [y_dots[0]], "ro", markersize=4)
+        plt.plot([x_dots[1]], [y_dots[1]], "go", markersize=4)
+        plt.plot([x_dots[2]], [y_dots[2]], "bo", markersize=4)
+
         plt.show()
 
         return "Лабораторная 2 (нелинейное уравнение) завершилась"
