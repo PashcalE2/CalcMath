@@ -13,8 +13,6 @@ def cramer(a11, a12, b1, a21, a22, b2):
     det_x = b1 * a22 - a12 * b2
     det_y = a11 * b2 - b1 * a21
 
-    # print(f"(1) {a11}x + {a12}y = {b1}\n(2) {a21}x + {a22}y = {b2}\n({det_x / det_a}, {det_y / det_a})")
-
     return det_x / det_a, det_y / det_a
 
 
@@ -25,7 +23,7 @@ def newton_method(f, df_dx, df_dy, g, dg_dx, dg_dy, x, y, epsilon=0.01):
     dy = 1
     iters_count = 0
 
-    while ((abs(dx) > epsilon) or (abs(dy) > epsilon)) and (abs(x) < 100) and (abs(y) < 100):
+    while ((abs(dx) > epsilon) or (abs(dy) > epsilon)) and (abs(x) < 1000000) and (abs(y) < 1000000):
         dx, dy = cramer(
             df_dx(x, y), df_dy(x, y), -f(x, y),
             dg_dx(x, y), dg_dy(x, y), -g(x, y)
@@ -177,12 +175,30 @@ class Lab2ManyCommand(AnyCommand):
         )
 
         io.output.info_msg(f"Метод Ньютона: {result}")
+        x = result.get_col(1)[-1]
+        y = result.get_col(2)[-1]
+        str_f = f.__str__()\
+            .replace("x", "{:.3f}".format(x))\
+            .replace("y", "{:.3f}".format(y))\
+            .replace("= 0", "= {:.3f}".format(f.derivative(0)(x, y)))
+        str_g = g.__str__()\
+            .replace("x", "{:.3f}".format(x))\
+            .replace("y", "{:.3f}".format(y))\
+            .replace("= 0", "= {:.3f}".format(g.derivative(0)(x, y)))
+
+        io.output.info_msg(f"Проверка решений:\n{str_f}\n{str_g}")
 
         for y_values in plot1:
             plt.plot(x_values, y_values, color="red")
         for y_values in plot2:
             plt.plot(x_values, y_values, color="blue")
-        plt.plot([x0].append(result.get_col(1)), [y0].append(result.get_col(2)), "go", markersize=4)
+
+        x_dots = result.get_col(1)
+        x_dots.append(x0)
+
+        y_dots = result.get_col(2)
+        y_dots.append(y0)
+        plt.plot(x_dots, y_dots, "go", markersize=4)
 
         plt.grid(visible=True)
         plt.show()

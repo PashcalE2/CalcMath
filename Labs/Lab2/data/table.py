@@ -78,7 +78,7 @@ class Table:
         if row_id < 1 or row_id > len(self.head):
             raise Exception("индекс вне границ")
 
-        return self.rows[row_id]
+        return self.rows[row_id].copy()
 
     def set_row(self, row_id=0, row=[]):
         if len(row) != len(self.head):
