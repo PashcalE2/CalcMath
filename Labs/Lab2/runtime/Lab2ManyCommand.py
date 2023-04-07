@@ -123,7 +123,7 @@ class Lab2ManyCommand(AnyCommand):
             rows=[[i + 1, self.equations_list[i]] for i in range(len(self.equations_list))]
         ))
 
-        system_n = io.input.uint_input("Введите номер системы:") - 1
+        system_n = io.input.index_input(self.equations_list, 1, "Введите номер системы:") - 1
 
         # show plot
 
@@ -131,8 +131,8 @@ class Lab2ManyCommand(AnyCommand):
         b = 5
 
         x_values = [a + i * (b - a) / 1000 for i in range(1001)]
-
-        plt.grid(visible=True)
+        plot1 = []
+        plot2 = []
 
         for eq in self.render_equations[system_n * 2]:
             y_values = []
@@ -142,7 +142,7 @@ class Lab2ManyCommand(AnyCommand):
                 except Exception as e:
                     y_values.append(math.nan)
 
-            plt.plot(x_values, y_values, color="red")
+            plot1.append(y_values.copy())
 
         for eq in self.render_equations[system_n * 2 + 1]:
             y_values = []
@@ -152,8 +152,13 @@ class Lab2ManyCommand(AnyCommand):
                 except Exception as e:
                     y_values.append(math.nan)
 
-            plt.plot(x_values, y_values, color="blue")
+            plot2.append(y_values.copy())
 
+        for y_values in plot1:
+            plt.plot(x_values, y_values, color="red")
+        for y_values in plot2:
+            plt.plot(x_values, y_values, color="blue")
+        plt.grid(visible=True)
         plt.show()
 
         # solve
@@ -172,5 +177,14 @@ class Lab2ManyCommand(AnyCommand):
         )
 
         io.output.info_msg(f"Метод Ньютона: {result}")
+
+        for y_values in plot1:
+            plt.plot(x_values, y_values, color="red")
+        for y_values in plot2:
+            plt.plot(x_values, y_values, color="blue")
+        plt.plot([x0].append(result.get_col(1)), [y0].append(result.get_col(2)), "go", markersize=4)
+
+        plt.grid(visible=True)
+        plt.show()
 
         return "Лабораторная 2 (система функций) завершилась"
