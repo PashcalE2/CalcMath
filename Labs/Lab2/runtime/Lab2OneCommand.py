@@ -111,7 +111,7 @@ class Lab2OneCommand(AnyCommand):
             rows=[[i + 1, self.equations_list[i].__str__()] for i in range(len(self.equations_list))]
         ))
 
-        equation_n = io.input.uint_input("Введите номер уравнения:") - 1
+        equation_n = io.input.index_input(self.equations_list, 1, "Введите номер уравнения:") - 1
         equation = self.equations_list[equation_n]
         a, b = 0, 0
 

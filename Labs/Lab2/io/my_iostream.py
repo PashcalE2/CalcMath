@@ -102,6 +102,16 @@ class MyInputStream:
     def uint_input(self, msg="write uint: "):
         return hard_primitive_input(str_to_uint, self.next, msg)
 
+    def index_input(self, array=list, offset=0, msg="write index of array: "):
+        index = -1
+        while True:
+            index = self.uint_input(msg)
+            if (index - offset < 0) or (index - offset >= len(array)):
+                MyOutputStream.error_msg("индекс вне границ массива")
+            else:
+                break
+        return index
+
     def matrix_elements_input(self, matrix: Matrix, msg="write matrix elements"):
         MyOutputStream.info_msg(msg)
         n = matrix.get_rows_count()

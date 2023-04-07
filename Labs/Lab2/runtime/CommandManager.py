@@ -31,7 +31,7 @@ class CommandManager(AnyManager):
         try:
             return self.commands[name]
         except KeyError as e:
-            raise Exception(f"А нет такой команды '{name}'")
+            raise Exception(f"Нет такой команды '{name}'. Напишите 'help', чтобы увидеть доступные команды")
 
     def remove_command(self, name):
         self.commands.pop(name)
