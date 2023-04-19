@@ -25,6 +25,7 @@ def newton_method(f, df_dx, df_dy, g, dg_dx, dg_dy, x, y, epsilon=0.01):
     dy = 1
     iters_count = 0
 
+    # делаем пока всё не хорошо (до ответа не дошли), или пока не станет совсем плохо (улетели не пойми куда)
     while ((abs(dx) > epsilon) or (abs(dy) > epsilon)) and (abs(x) < 100) and (abs(y) < 100):
         dx, dy = cramer(
             df_dx(x, y), df_dy(x, y), -f(x, y),
