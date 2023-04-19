@@ -4,18 +4,9 @@ from Labs.Lab3.data.equation import Equation
 from Labs.Lab3.data.table import Table
 from Labs.Lab3.runtime.AnyCommand import AnyCommand
 from Labs.Lab3.runtime.AnyManager import AnyManager
-
-
-def rectangles():
-    return 0
-
-
-def trapezes():
-    return 0
-
-
-def simpson():
-    return 0
+from Labs.Lab3.integrals.RectanglesMethod import LeftRectanglesMethod, MiddleRectanglesMethod, RightRectanglesMethod
+from Labs.Lab3.integrals.TrapezesMethod import TrapezesMethod
+from Labs.Lab3.integrals.SimpsonMethod import SimpsonMethod
 
 
 class Lab3IntegrateGood(AnyCommand):
@@ -37,7 +28,11 @@ class Lab3IntegrateGood(AnyCommand):
         ]
 
         self.methods_list = [
-
+            LeftRectanglesMethod(),
+            MiddleRectanglesMethod(),
+            RightRectanglesMethod(),
+            TrapezesMethod(),
+            SimpsonMethod()
         ]
 
     def execute(self):
@@ -57,6 +52,16 @@ class Lab3IntegrateGood(AnyCommand):
 
         n = 4
 
-        method_n = io.input.index_input()
+        io.output.info_msg("Методы для решения")
+        io.output.info_msg(Table(
+            head=["Номер", "Метод"],
+            rows=[[i + 1, self.methods_list[i].__str__()] for i in range(len(self.methods_list))]
+        ))
+
+        method_n = io.input.index_input(self.methods_list, 1, "Введите номер метода") - 1
+        method = self.methods_list[method_n]
+
+        result = method.integrate(equation.derivative(0), a, b, n, epsilon)
+        io.output.info_msg(f"Результат работы метода. {method.__str__()}\n{result}")
 
         return "Лабораторная работа 3 (вычисление собственного интеграла) завершена"
