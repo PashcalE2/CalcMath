@@ -14,17 +14,23 @@ class Lab3IntegrateGood(AnyCommand):
         super().__init__(name="lab3_good", manager=manager, description="Лабораторная работа 3 (вычисление собственного интеграла)")
 
         self.equations_list = [
-            Equation([
-                lambda x: 5 * math.cos(x) + x
-            ], "5*cos(x) + x"),
+            Equation(
+                lambda x: 5 * math.cos(x) + x,
+                [],
+                "5*cos(x) + x"
+            ),
 
-            Equation([
-                lambda x: x ** 4 + 6.64 * x ** 3 - 15.12 * x ** 2 - 55.79 * x + 63.9
-            ], "x**4 + 6.64x**3 - 15.12x**2 - 55.79x + 63.9"),
+            Equation(
+                lambda x: x ** 4 + 6.64 * x ** 3 - 15.12 * x ** 2 - 55.79 * x + 63.9,
+                [],
+                "x**4 + 6.64x**3 - 15.12x**2 - 55.79x + 63.9"
+            ),
 
-            Equation([
-                lambda x: math.log((x * math.sin(x)) ** 2 + math.cos(x) ** 2 - 0.5, math.e)
-            ], "ln[(x*sin(x))**2 + cos(x)**2 - 0.5]")
+            Equation(
+                lambda x: math.log((x * math.sin(x)) ** 2 + math.cos(x) ** 2 - 0.5, math.e),
+                [],
+                "ln[(x*sin(x))**2 + cos(x)**2 - 0.5]"
+            )
         ]
 
         self.methods_list = [
@@ -61,7 +67,7 @@ class Lab3IntegrateGood(AnyCommand):
         method_n = io.input.index_input(self.methods_list, 1, "Введите номер метода") - 1
         method = self.methods_list[method_n]
 
-        result = method.integrate(equation.derivative(0), a, b, n, epsilon)
+        result = method.integrate(equation.get_f_x(), a, b, n, epsilon)
         io.output.info_msg(f"Результат работы метода. {method.__str__()}\n{result}")
 
-        return "Лабораторная работа 3 (вычисление собственного интеграла) завершена"
+        return "Лабораторная работа 3, вычисление собственного интеграла - завершена"

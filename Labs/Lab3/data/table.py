@@ -75,7 +75,7 @@ class Table:
         self.rows.append(row)
 
     def get_row(self, row_id=0):
-        if row_id < 1 or row_id > len(self.head):
+        if row_id < -len(self.head) or row_id > len(self.head):
             raise Exception("индекс вне границ")
 
         return self.rows[row_id]
@@ -94,6 +94,15 @@ class Table:
             raise Exception("индекс вне границ")
 
         return [self.rows[i + 1][col_id] for i in range(len(self.rows) - 1)]
+
+    def set_cell(self, row_id=0, col_id=0, value=""):
+        self.rows[row_id][col_id] = value
+
+    def get_cell(self, row_id=0, col_id=0):
+        return self.rows[row_id][col_id]
+
+    def get_rows_count(self):
+        return len(self.rows)
 
     def __str__(self):
         str_rows = []

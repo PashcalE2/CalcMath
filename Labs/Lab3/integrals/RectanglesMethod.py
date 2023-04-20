@@ -37,7 +37,8 @@ class MiddleRectanglesMethod(AnyCompIntegrate):
             s_half_n = s_n
             s_n = sum(y) * h
             runge_num = self.runge_rule(s_n, s_half_n, p=2)
-            result.add_row(row=[steps, n, s_n, runge_num])
+            result.set_cell(-1, 3, runge_num)
+            result.add_row(row=[steps, n, s_n, "-"])
 
         return result
 
@@ -77,7 +78,8 @@ class LeftRectanglesMethod(AnyCompIntegrate):
             s_half_n = s_n
             s_n = sum(y) * h
             runge_num = self.runge_rule(s_n, s_half_n, p=2)
-            result.add_row(row=[steps, n, s_n, runge_num])
+            result.set_cell(-1, 3, runge_num)
+            result.add_row(row=[steps, n, s_n, "-"])
 
         return result
 
@@ -117,6 +119,7 @@ class RightRectanglesMethod(AnyCompIntegrate):
             s_half_n = s_n
             s_n = sum(y) * h
             runge_num = self.runge_rule(s_n, s_half_n, p=2)
-            result.add_row(row=[steps, n, s_n, runge_num])
+            result.set_cell(-1, 3, runge_num)
+            result.add_row(row=[steps, n, s_n, "-"])
 
         return result

@@ -31,11 +31,12 @@ class TrapezesMethod(AnyCompIntegrate):
 
             n = len(x) - 1
             h = (b - a) / n
-            y = [f(x[i + 1]) for i in range(n - 1)]
+            y = [f(x[i]) for i in range(1, n - 1)]
 
             s_half_n = s_n
             s_n = (sum(y) + (f(x[0]) + f(x[-1])) / 2) * h
             runge_num = self.runge_rule(s_n, s_half_n, p=2)
-            result.add_row(row=[steps, n, s_n, runge_num])
+            result.set_cell(-1, 3, runge_num)
+            result.add_row(row=[steps, n, s_n, "-"])
 
         return result

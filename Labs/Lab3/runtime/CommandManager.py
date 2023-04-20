@@ -4,6 +4,7 @@ from Labs.Lab3.runtime.AnyManager import AnyManager
 from Labs.Lab3.runtime.ExitCommand import ExitCommand
 from Labs.Lab3.runtime.HelpCommand import HelpCommand
 from Labs.Lab3.runtime.Lab3IntegrateGood import Lab3IntegrateGood
+from Labs.Lab3.runtime.Lab3IntegrateBad import Lab3IntegrateBad
 
 
 class CommandManager(AnyManager):
@@ -15,6 +16,7 @@ class CommandManager(AnyManager):
         self.add_command(ExitCommand(self))
         self.add_command(HelpCommand(self))
         self.add_command(Lab3IntegrateGood(self))
+        self.add_command(Lab3IntegrateBad(self))
 
     def get_iostream(self):
         return self.iostream
