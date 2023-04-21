@@ -7,7 +7,7 @@ from Labs.Lab3.runtime.AnyManager import AnyManager
 from Labs.Lab3.integrals.RectanglesMethod import LeftRectanglesMethod, MiddleRectanglesMethod, RightRectanglesMethod
 from Labs.Lab3.integrals.TrapezesMethod import TrapezesMethod
 from Labs.Lab3.integrals.SimpsonMethod import SimpsonMethod
-
+import Labs.Lab3.io.converter as converter
 
 class Lab3IntegrateBad(AnyCommand):
     def __init__(self, manager: AnyManager):
@@ -53,7 +53,8 @@ class Lab3IntegrateBad(AnyCommand):
         equation_n = io.input.index_input(self.equations_list, 1, "Введите номер уравнения:") - 1
         equation = self.equations_list[equation_n]
 
-        sigma = 0.000001
+        # sigma = 0.000001
+        sigma = io.input.any_input(converter.str_to_float, lambda x: ((x > 0) and (x < 10), "число должно быть больше 0 и меньше 10"), "Введите смещение от точек разрыва")
         a, b = io.input.interval_input("Ввод границ интервала:")
 
         intervals = [a]
@@ -65,7 +66,7 @@ class Lab3IntegrateBad(AnyCommand):
                 breaks += 1
             elif point == b:
                 io.output.info_msg(f"Точка разрыва на правой границе: {point}")
-                intervals[-1] = b - sigma
+                intervals.append(b - sigma)
                 breaks += 1
             elif (point > a) and (point < b):
                 intervals.append(point - sigma)
@@ -79,7 +80,7 @@ class Lab3IntegrateBad(AnyCommand):
             intervals.append(b)
 
         if breaks > 0:
-            io.output.info_msg(f"На интервале {breaks} точек разрыва")
+            io.output.info_msg(f"На интервале {breaks} точек разрыва. Аналитически, интеграл может расходиться")
 
         epsilon = io.input.float_input("Введите точность для правила Рунге:")
 

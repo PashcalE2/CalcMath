@@ -20,7 +20,7 @@ class MiddleRectanglesMethod(AnyCompIntegrate):
         runge_num = epsilon + 1
         result.add_row(row=[steps, n, s_n, "-"])
 
-        while runge_num > epsilon:
+        while (runge_num > epsilon) and (not self.is_n_too_big(n)):
             steps += 1
 
             new_x = []
@@ -54,14 +54,14 @@ class LeftRectanglesMethod(AnyCompIntegrate):
 
         steps = 1
         h = (b - a) / n
-        x = [(a + h * i) for i in range(n)]
+        x = [(a + h * i) for i in range(n + 1)]
         y = [f(x[i]) for i in range(n)]
 
         s_n = sum(y) * h
         runge_num = epsilon + 1
         result.add_row(row=[steps, n, s_n, "-"])
 
-        while runge_num > epsilon:
+        while (runge_num > epsilon) and (not self.is_n_too_big(n)):
             steps += 1
 
             new_x = []
@@ -73,7 +73,7 @@ class LeftRectanglesMethod(AnyCompIntegrate):
 
             n = len(x) - 1
             h = (b - a) / n
-            y = [f((x[i] + x[i + 1]) / 2) for i in range(n)]
+            y = [f(x[i]) for i in range(n)]
 
             s_half_n = s_n
             s_n = sum(y) * h
@@ -95,14 +95,14 @@ class RightRectanglesMethod(AnyCompIntegrate):
 
         steps = 1
         h = (b - a) / n
-        x = [(a + h * (i + 1)) for i in range(n)]
+        x = [(a + h * (i + 1)) for i in range(n + 1)]
         y = [f(x[i]) for i in range(n)]
 
         s_n = sum(y) * h
         runge_num = epsilon + 1
         result.add_row(row=[steps, n, s_n, "-"])
 
-        while runge_num > epsilon:
+        while (runge_num > epsilon) and (not self.is_n_too_big(n)):
             steps += 1
 
             new_x = []
@@ -114,7 +114,7 @@ class RightRectanglesMethod(AnyCompIntegrate):
 
             n = len(x) - 1
             h = (b - a) / n
-            y = [f((x[i] + x[i + 1]) / 2) for i in range(n)]
+            y = [f(x[i + 1]) for i in range(n)]
 
             s_half_n = s_n
             s_n = sum(y) * h

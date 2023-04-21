@@ -19,7 +19,7 @@ class TrapezesMethod(AnyCompIntegrate):
         runge_num = epsilon + 1
         result.add_row(row=[steps, n, s_n, "-"])
 
-        while runge_num > epsilon:
+        while (runge_num > epsilon) and (not self.is_n_too_big(n)):
             steps += 1
 
             new_x = []

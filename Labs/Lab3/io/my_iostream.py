@@ -35,9 +35,9 @@ def hard_primitive_input(converter, reader, msg, validator=lambda x: (True, ""))
             MyOutputStream.input_msg(s)
             result = converter(s)
 
-            valid, msg = validator(result)
+            valid, validator_msg = validator(result)
             if not valid:
-                raise Exception(msg)
+                raise Exception(validator_msg)
 
             return result
         except EOFError:
@@ -80,6 +80,9 @@ class MyInputStream:
             return self.data[self.pointer - 1]
 
         return input()
+
+    def any_input(self, some_converter, some_validator, msg="write something"):
+        return hard_primitive_input(some_converter, self.next, msg, some_validator)
 
     def string_input(self, msg="write string: ") -> str:
         return hard_primitive_input(str.strip, self.next, msg)

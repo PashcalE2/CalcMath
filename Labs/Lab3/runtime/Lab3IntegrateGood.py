@@ -69,5 +69,6 @@ class Lab3IntegrateGood(AnyCommand):
 
         result = method.integrate(equation.get_f_x(), a, b, n, epsilon)
         io.output.info_msg(f"Результат работы метода. {method.__str__()}\n{result}")
+        io.output.info_msg(f"Итоговое значение определенного интеграла: {result.get_row(-1)[2]} +- {result.get_row(-2)[3]}")
 
         return "Лабораторная работа 3, вычисление собственного интеграла - завершена"
