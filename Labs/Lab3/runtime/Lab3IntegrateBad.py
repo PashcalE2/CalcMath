@@ -21,15 +21,15 @@ class Lab3IntegrateBad(AnyCommand):
             ),
 
             Equation(
-                lambda x: 1 / x ** (1/2),
+                lambda x: math.sin(x) / x,
                 [0],
-                "1 / x ** (1/2)"
+                "sin(x) / x"
             ),
 
             Equation(
-                lambda x: math.log((x * math.sin(x)) ** 2 + math.cos(x) ** 2 - 0.5, math.e),
-                [],
-                "ln[(x*sin(x))**2 + cos(x)**2 - 0.5]"
+                lambda x: 1 / ((x + 1) * (x - 2)),
+                [-1, 2],
+                "1 / ((x + 1) * (x - 2))"
             )
         ]
 
@@ -94,13 +94,15 @@ class Lab3IntegrateBad(AnyCommand):
         method_n = io.input.index_input(self.methods_list, 1, "Введите номер метода") - 1
         method = self.methods_list[method_n]
         integrals_sum = 0
+        delta = 0
         for i in range(len(intervals) // 2):
             left = intervals[2 * i]
             right = intervals[2 * i + 1]
             result = method.integrate(equation.get_f_x(), left, right, n, epsilon)
             io.output.info_msg(f"Результат работы метода на интервале: [{left}; {right}]. {method.__str__()}\n{result}")
             integrals_sum += result.get_row(-1)[2]
+            delta += result.get_row(-2)[3]
 
-        io.output.info_msg(f"Итоговое значение определенного интеграла: {integrals_sum}")
+        io.output.info_msg(f"Итоговое значение определенного интеграла: {integrals_sum} +- {delta}")
 
         return "Лабораторная работа 3, вычисление несобственного интеграла в смысле главного значения - завершена"

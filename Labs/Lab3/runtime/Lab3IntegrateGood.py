@@ -21,9 +21,9 @@ class Lab3IntegrateGood(AnyCommand):
             ),
 
             Equation(
-                lambda x: x ** 4 + 6.64 * x ** 3 - 15.12 * x ** 2 - 55.79 * x + 63.9,
+                lambda x: math.exp(-(x ** 2)) / (math.pi ** 0.5),
                 [],
-                "x**4 + 6.64x**3 - 15.12x**2 - 55.79x + 63.9"
+                "(e ** (-x ** 2)) / (pi ** 0.5)"
             ),
 
             Equation(
