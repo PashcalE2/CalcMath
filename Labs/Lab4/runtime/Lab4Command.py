@@ -2,7 +2,7 @@ from Labs.Lab4.runtime.AnyCommand import AnyCommand
 from Labs.Lab4.runtime.AnyManager import AnyManager
 from pathlib import Path
 import Labs.Lab4.io.converter as converter
-from Labs.Lab4.methods.less_squares import poly
+from Labs.Lab4.methods.less_squares import poly_approximation
 
 
 class Lab4Command(AnyCommand):
@@ -39,7 +39,7 @@ class Lab4Command(AnyCommand):
             x.append(io.input.float_input(f"Введите координату x точки {i + 1}"))
             y.append(io.input.float_input(f"Введите координату y точки {i + 1}"))
 
-        print(poly(x, y, 2))
+        print(poly_approximation(x, y, 2))
 
         io.input.from_console()
         return "Лабораторная работа 4 (апроксимация) завершилась"

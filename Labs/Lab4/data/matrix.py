@@ -83,7 +83,7 @@ class Matrix:
         return new_m
 
 
-def gauss_linear_solve(A:Matrix, B:Matrix):
+def gauss_linear_solve(A: Matrix, B: Matrix):
     if A.get_rows_count() > B.get_rows_count():
         raise Exception("Размерности не подходят")
 

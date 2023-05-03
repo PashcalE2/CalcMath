@@ -1,5 +1,6 @@
 from Labs.Lab4.data.matrix import Matrix
 from Labs.Lab4.data.matrix import gauss_linear_solve
+import math
 
 
 def pierson(xy_data=[]):
@@ -14,7 +15,7 @@ def pierson(xy_data=[]):
                 sum([(x[i] - mean_x) ** 2 for i in range(n)]) * sum([(y[i] - mean_y) ** 2 for i in range(n)])) ** 0.5
 
 
-def poly(x=[], y=[], m=1):
+def poly_approximation(x=[], y=[], m=1):
     if len(x) != len(y):
         raise Exception("Размеры данных не совпадают")
 
@@ -34,3 +35,43 @@ def poly(x=[], y=[], m=1):
 
     return gauss_linear_solve(A, B)
 
+
+def pow_approximation(x=[], y=[]):
+    if len(x) != len(y):
+        raise Exception("Размеры данных не совпадают")
+
+    try:
+        ln_x = [math.log(v, math.e) for v in x]
+        ln_y = [math.log(v, math.e) for v in y]
+    except Exception as e:
+        raise Exception("Логарифм отрицательного числа, брух")
+
+    a_numbers = poly_approximation(ln_x, ln_y)
+
+    return [math.exp(a_numbers[0]), a_numbers[1]]
+
+
+def exp_approximation(x=[], y=[]):
+    if len(x) != len(y):
+        raise Exception("Размеры данных не совпадают")
+
+    try:
+        ln_y = [math.log(v, math.e) for v in y]
+    except Exception as e:
+        raise Exception("Логарифм отрицательного числа, брух")
+
+    a_numbers = poly_approximation(x, ln_y)
+
+    return [math.exp(a_numbers[0]), a_numbers[1]]
+
+
+def ln_approximation(x=[], y=[]):
+    if len(x) != len(y):
+        raise Exception("Размеры данных не совпадают")
+
+    try:
+        ln_x = [math.log(v, math.e) for v in x]
+    except Exception as e:
+        raise Exception("Логарифм отрицательного числа, брух")
+
+    return poly_approximation(ln_x, y)
