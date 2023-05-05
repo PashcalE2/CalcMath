@@ -3,75 +3,135 @@ from Labs.Lab4.data.matrix import gauss_linear_solve
 import math
 
 
-def pierson(xy_data=[]):
-    n = len(xy_data)
+def pierson_score(x=[], y=[]):
+    if len(x) != len(y):
+        raise Exception("Размеры данных не совпадают")
 
-    x = [p[0] for p in xy_data]
+    n = len(x)
+
     mean_x = sum(x) / n
-    y = [p[1] for p in xy_data]
     mean_y = sum(y) / n
 
     return sum([(x[i] - mean_x) * (y[i] - mean_y) for i in range(n)]) / (
                 sum([(x[i] - mean_x) ** 2 for i in range(n)]) * sum([(y[i] - mean_y) ** 2 for i in range(n)])) ** 0.5
 
 
-def poly_approximation(x=[], y=[], m=1):
-    if len(x) != len(y):
-        raise Exception("Размеры данных не совпадают")
+class AnyMethod:
+    def __init__(self, x=[], y=[], name="Some method", view="y(x) = ..."):
+        self.name = name
+        self.view = view
+        self.x = x
+        self.y = y
 
-    m = int(m)
-    if m < 1:
-        raise Exception("Степень полинома должна быть не меньше 1")
+    def set_x(self, x=[]):
+        self.x = x
 
-    X_sums = [sum([x[j] ** i for j in range(len(x))]) for i in range(2 * m + 1)]
-    XY_sums = [sum([(x[j] ** i) * y[j] for j in range(len(x))]) for i in range(m + 1)]
+    def set_y(self, y=[]):
+        self.y = y
 
-    A = Matrix(m + 1, m + 1)
-    for i in range(m + 1):
-        A.set_row(i, [X_sums[j] for j in range(i, i + m + 1)])
-
-    B = Matrix(m + 1, 1)
-    B.set_col(0, XY_sums)
-
-    return gauss_linear_solve(A, B)
+    def approximation(self):
+        return lambda x: 0, []
 
 
-def pow_approximation(x=[], y=[]):
-    if len(x) != len(y):
-        raise Exception("Размеры данных не совпадают")
+class PolyMethod(AnyMethod):
+    def __init__(self, x=[], y=[], m=1):
+        view = "y(x) = a_0"
+        for i in range(1, m + 1):
+            view += f" + a_{i} * x ** {i}"
+        super().__init__(x, y, f"Полином степени {m}", view)
+        self.m = m
 
-    try:
-        ln_x = [math.log(v, math.e) for v in x]
-        ln_y = [math.log(v, math.e) for v in y]
-    except Exception as e:
-        raise Exception("Логарифм отрицательного числа, брух")
+    def approximation(self):
+        if len(self.x) != len(self.y):
+            raise Exception(f"Размеры данных не подходят: {len(self.x)}, {len(self.y)}")
 
-    a_numbers = poly_approximation(ln_x, ln_y)
+        self.m = int(self.m)
+        if self.m < 1:
+            raise Exception("Степень полинома должна быть не меньше 1")
 
-    return [math.exp(a_numbers[0]), a_numbers[1]]
+        X_sums = [sum([self.x[j] ** i for j in range(len(self.x))]) for i in range(2 * self.m + 1)]
+        XY_sums = [sum([(self.x[j] ** i) * self.y[j] for j in range(len(self.x))]) for i in range(self.m + 1)]
 
+        A = Matrix(self.m + 1, self.m + 1)
+        for i in range(self.m + 1):
+            A.set_row(i, [X_sums[j] for j in range(i, i + self.m + 1)])
 
-def exp_approximation(x=[], y=[]):
-    if len(x) != len(y):
-        raise Exception("Размеры данных не совпадают")
+        B = Matrix(self.m + 1, 1)
+        B.set_col(0, XY_sums)
+        a_numbers = gauss_linear_solve(A, B)
 
-    try:
-        ln_y = [math.log(v, math.e) for v in y]
-    except Exception as e:
-        raise Exception("Логарифм отрицательного числа, брух")
-
-    a_numbers = poly_approximation(x, ln_y)
-
-    return [math.exp(a_numbers[0]), a_numbers[1]]
+        return lambda t: sum([a_numbers[i] * (t ** i) for i in range(self.m + 1)]), a_numbers
 
 
-def ln_approximation(x=[], y=[]):
-    if len(x) != len(y):
-        raise Exception("Размеры данных не совпадают")
+class PowMethod(AnyMethod):
+    def __init__(self, x=[], y=[]):
+        super().__init__(x, y, "Степенная функция", "y(x) = a_0 * x ** a_1")
 
-    try:
-        ln_x = [math.log(v, math.e) for v in x]
-    except Exception as e:
-        raise Exception("Логарифм отрицательного числа, брух")
+    def approximation(self):
+        if len(self.x) != len(self.y):
+            raise Exception("Размеры данных не совпадают")
 
-    return poly_approximation(ln_x, y)
+        try:
+            ln_x = [math.log(v, math.e) for v in self.x]
+            ln_y = [math.log(v, math.e) for v in self.y]
+        except Exception as e:
+            raise Exception("Логарифм отрицательного числа, брух")
+
+        func, a_numbers = PolyMethod(ln_x, ln_y, 1).approximation()
+        a_numbers[0] = math.exp(a_numbers[0])
+
+        return lambda t: a_numbers[0] * math.pow(t, a_numbers[1]), a_numbers
+
+
+class ExpMethod(AnyMethod):
+    def __init__(self, x=[], y=[]):
+        super().__init__(x, y, "Экспонента", "y(x) = a_0 * exp(a_1 * x)")
+
+    def approximation(self):
+        if len(self.x) != len(self.y):
+            raise Exception("Размеры данных не совпадают")
+
+        try:
+            ln_y = [math.log(v, math.e) for v in self.y]
+        except Exception as e:
+            raise Exception("Логарифм отрицательного числа, брух")
+
+        func, a_numbers = PolyMethod(self.x, ln_y, 1).approximation()
+        a_numbers[0] = math.exp(a_numbers[0])
+
+        return lambda t: a_numbers[0] * math.exp(a_numbers[1] * t), a_numbers
+
+
+class LnMethod(AnyMethod):
+    def __init__(self, x=[], y=[]):
+        super().__init__(x, y, "Натуральный логарифм", "y(x) = a_0 + a_1 * ln(x)")
+
+    def approximation(self):
+        if len(self.x) != len(self.y):
+            raise Exception("Размеры данных не совпадают")
+
+        try:
+            ln_x = [math.log(v, math.e) for v in self.x]
+        except Exception as e:
+            raise Exception("Логарифм отрицательного числа, брух")
+
+        return PolyMethod(ln_x, self.y, 1).approximation()
+
+
+class LessSquares:
+    def __init__(self, method: AnyMethod):
+        self.method = method
+
+    def calc(self):
+        try:
+            phi, a_numbers = self.method.approximation()
+
+            deviation = [phi(self.method.x[i]) - self.method.y[i] for i in range(len(self.method.x))]
+            standard_deviation = sum([v ** 2 for v in deviation])
+            r2_score = 1 - standard_deviation / (sum([phi(v ** 2) for v in self.method.x])
+                                                 - sum([phi(v) ** 2 for v in self.method.x]) / len(self.method.x))
+
+            return phi, a_numbers, deviation, standard_deviation, r2_score
+
+        except Exception as e:
+            raise Exception(f"Метод ({self.method.name}) не удалось выполнить: {e}")
