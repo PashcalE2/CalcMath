@@ -127,7 +127,7 @@ class LessSquares:
             phi, a_numbers = self.method.approximation()
 
             deviation = [phi(self.method.x[i]) - self.method.y[i] for i in range(len(self.method.x))]
-            standard_deviation = sum([v ** 2 for v in deviation])
+            standard_deviation = math.sqrt(sum([v ** 2 for v in deviation]) / len(self.method.x))
             r2_score = 1 - standard_deviation / (sum([phi(v ** 2) for v in self.method.x])
                                                  - sum([phi(v) ** 2 for v in self.method.x]) / len(self.method.x))
 

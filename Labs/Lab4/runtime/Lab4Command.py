@@ -29,12 +29,12 @@ class Lab4Command(AnyCommand):
 
         if io.input.is_from_file():
             count = io.input.uint_input("Введите количество точек")
-            if count < 7 or count > 32:
+            if count < 8 or count > 32:
                 io.output.error_msg(f"Количество точек не подходит, должно быть хотя бы 8 и не больше 32")
                 return "Измените входной файл так, чтобы там было необходимое количество точек"
         else:
             count = io.input.any_input(converter.str_to_int,
-                               lambda n: (n >= 7 and n <= 32, "Количество точек не подходит, должно быть хотя бы 8 и не больше 32"),
+                               lambda n: (n >= 8 and n <= 32, "Количество точек не подходит, должно быть хотя бы 8 и не больше 32"),
                                "Введите количество точек")
 
         x = []
@@ -78,13 +78,12 @@ class Lab4Command(AnyCommand):
             s += f"a_{i} = {best_a_numbers[i]}\n"
         io.output.info_msg(f"Коэффициенты аппроксимирующей функции:\n{s}")
 
-        io.output.info_msg(f"Среднеквадратическое отклонение: {best_standard_deviation}")
-
         table = Table(head=["x_i", "y_i", "phi_i", "epsilon_i"])
         for i in range(len(x)):
             table.add_row([x[i], y[i], best_phi(x[i]), best_deviation[i]])
 
         io.output.info_msg(table)
+        io.output.info_msg(f"Среднеквадратическое отклонение: {best_standard_deviation}")
 
         if best_method_name == all_methods[0].name:
             io.output.info_msg(f"Коэффициент корелляции Пирсона: {pierson_score(x, y)}")
@@ -95,7 +94,7 @@ class Lab4Command(AnyCommand):
         a = min(x)
         b = max(x)
         plot_points_count = 100
-        plot_x = [a + (b - a) * i / (plot_points_count - 1) for i in range(plot_points_count)]
+        plot_x = [a + (b - a) * (i - 3) / (plot_points_count - 7) for i in range(plot_points_count)]
 
         plt.figure()
         plt.scatter(x, y, c="black")
