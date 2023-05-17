@@ -1,8 +1,7 @@
-
 def mul(l=[]):
-    result = 1
+    result = 1.0
     for i in l:
-        result *= i
+        result = result * i
     return result
 
 
@@ -12,7 +11,6 @@ def gauss_interpolation(x_train=[], y_train=[]):
 
     if len(set(x_train)) != len(x_train):
         raise Exception("Несколько вариантов для одного X")
-
 
     return 0
 
@@ -40,28 +38,25 @@ class Lagrange(AnyMethod):
 
     def __init__(self, x_train=[], y_train=[]):
         super().__init__(x_train, y_train)
+        self.lagrange_elements = []
+        self.interpolate()
 
     def interpolate(self):
         if len(self.x_train) != len(self.y_train):
             raise Exception("Размеры данных не совпадают")
 
-        if len(set(self.x_train)) != len(self.x_train):
+        if len(set(self.x_train)) != len(self.y_train):
             raise Exception("Несколько вариантов для одного X")
 
         n = len(self.x_train)
-        l_n = []
+        self.lagrange_elements = []
 
-        for i in range(n):
-            x_values = []
-            for j in range(n):
-                if i != j:
-                    x_values.append(self.x_train[j])
+        for j in range(n):
+            self.lagrange_elements.append(lambda x, i: mul([(x - x_j) / (self.x_train[i] - x_j)
+                                                            for x_j in (set(self.x_train) - {self.x_train[i]})]))
 
-            l_n.append(lambda x: mul([x - x_j for x_j in x_values]) / mul([self.x_train[i] - x_j for x_j in x_values]))
-
-        self.interpolating_func = lambda x: sum([l_n[i](x) * self.y_train[i] for i in range(n)])
+        self.interpolating_func = lambda x: sum([(self.lagrange_elements[j](x, j) * self.y_train[j]) for j in range(n)])
         return self.interpolating_func
 
     def calc(self, x):
         return self.interpolating_func(x)
-
