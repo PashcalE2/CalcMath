@@ -58,7 +58,9 @@ class MyInputStream:
         self.pointer = 0
 
     def from_file(self, file_name: str):
-        self.file_data = open(file_name, "r").read().strip()
+        file = open(file_name, "r")
+        self.file_data = file.read().strip()
+        file.close()
         self.file_name = file_name
 
         self.file_data = self.file_data.replace("\n", self.separator)
