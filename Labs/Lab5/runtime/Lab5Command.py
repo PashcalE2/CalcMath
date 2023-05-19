@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 from Labs.Lab5.data.equation import Equation
 from Labs.Lab5.data.table import Table
-from Labs.Lab5.methods.interpolation import Lagrange
+from Labs.Lab5.methods.interpolation import Lagrange, Gauss
 from Labs.Lab5.runtime.AnyCommand import AnyCommand
 from Labs.Lab5.runtime.AnyManager import AnyManager
 
@@ -14,8 +14,8 @@ class Lab5Command(AnyCommand):
         super().__init__(name="lab5", manager=manager, description="Лабораторная работа 5 (интерполяция)")
 
         self.funcs = [
-            Equation(lambda x: x, [], "x"),
-            Equation(lambda x: math.sin(x), [], "sin(x)"),
+            Equation(lambda x: x * math.sin(x ** 2), [], "x * sin(x ** 2)"),
+            Equation(lambda x: math.exp(-x * x) * math.sin(x), [], "e ** (-x ** 2) * sin(x)"),
             Equation(lambda x: x * math.cos(x), [], "x * cos(x)")
         ]
 
@@ -71,19 +71,22 @@ class Lab5Command(AnyCommand):
             y_train = [func(x) for x in x_train]
 
         x = io.input.float_input("Введите x")
-        lagrange = Lagrange(x_train, y_train)
 
-        io.output.info_msg(f"Метод Лагранжа: y({x}) = {lagrange.calc(x)}")
+        lagrange = Lagrange(x_train, y_train)
+        gauss = Gauss(x_train, y_train)
+        io.output.info_msg(f"Многочлен Лагранжа: y({x}) = {lagrange.calc(x)}\n")
+        io.output.info_msg(f"Многочлен Гаусса (1-я формула): y({x}) = {gauss.calc_first(x)}")
+        io.output.info_msg(f"Многочлен Гаусса (2-я формула): y({x}) = {gauss.calc_second(x)}")
 
         points = 100
         x_values = [a + (b - a) * i / (points - 1) for i in range(points)]
 
-        plt.plot(x_train, y_train, c="red", label="исходная функция")
-        plt.legend()
+        plt.plot(x_train, y_train, c="red", marker="o", label="исходная функция")
+        plt.plot(x_values, [lagrange.calc(v) for v in x_values], c="green", label="многочлен Лагранжа")
+        plt.plot(x_values, [gauss.calc_first(v) for v in x_values], c="blue", label="многочлен Гаусса (1-я формула)")
+        plt.plot(x_values, [gauss.calc_second(v) for v in x_values], c="violet", label="многочлен Гаусса (2-я формула)")
 
-        plt.plot(x_values, [lagrange.calc(v) for v in x_values], c="green", label="метод лагранжа")
         plt.legend()
-
         plt.show()
 
         io.input.from_console()
