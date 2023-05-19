@@ -78,6 +78,25 @@ class Lab5Command(AnyCommand):
         io.output.info_msg(f"Многочлен Гаусса (1-я формула): y({x}) = {gauss.calc_first(x)}")
         io.output.info_msg(f"Многочлен Гаусса (2-я формула): y({x}) = {gauss.calc_second(x)}")
 
+        # delta_y table
+        delta_y = gauss.delta_y
+        head = [f"d{i + 1} y_i" for i in range(n - 1)]
+        head.insert(0, "y_i")
+        head.insert(0, "i")
+
+        table = Table(head, float_digits=5)
+        for i in range(n):
+            row = [i - n // 2]
+            for j in range(n - i):
+                row.append(delta_y[j][i])
+            for j in range(i):
+                row.append("-")
+            table.add_row(row)
+
+        io.output.info_msg(f"Таблица конечных разностей: {table}")
+
+        # plots
+
         points = 100
         x_values = [a + (b - a) * i / (points - 1) for i in range(points)]
 
