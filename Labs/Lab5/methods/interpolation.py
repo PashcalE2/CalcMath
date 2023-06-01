@@ -48,9 +48,6 @@ class Lagrange(AnyMethod):
         if len(self.x_train) != len(self.y_train):
             raise Exception("Размеры данных не совпадают")
 
-        if len(set(self.x_train)) != len(self.y_train):
-            raise Exception("Несколько вариантов для одного X")
-
         n = len(self.x_train)
         self.lagrange_elements = []
 
@@ -82,9 +79,6 @@ class Gauss(AnyMethod):
     def interpolate(self):
         if len(self.x_train) != len(self.y_train):
             raise Exception("Размеры данных не совпадают")
-
-        if len(set(self.x_train)) != len(self.y_train):
-            raise Exception("Несколько вариантов для одного X")
 
         n = len(self.x_train)
 

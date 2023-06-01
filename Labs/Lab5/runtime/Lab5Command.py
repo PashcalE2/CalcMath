@@ -55,6 +55,30 @@ class Lab5Command(AnyCommand):
                 x_train.append(io.input.float_input(f"Введите x_{i}"))
                 y_train.append(io.input.float_input(f"Введите y_{i}"))
 
+            if len(set(x_train)) != len(y_train):
+                new_x = []
+                new_y = []
+                i = 0
+                while i < len(x_train):
+                    new_x.append(x_train[i])
+                    sum_same_y = y_train[i]
+                    n_y = 1
+                    i += 1
+
+                    if i >= len(x_train):
+                        new_y.append(sum_same_y / n_y)
+                        break
+
+                    while x_train[i] in new_x and i < len(x_train):
+                        sum_same_y += y_train[i]
+                        n_y += 1
+                        i += 1
+                    new_y.append(sum_same_y / n_y)
+
+                x_train = new_x.copy()
+                y_train = new_y.copy()
+
+                n = len(x_train)
             # many y for one x
 
             a = x_train[0]
