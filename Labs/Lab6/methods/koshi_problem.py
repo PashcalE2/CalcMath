@@ -94,9 +94,6 @@ def milne(f=lambda x, y: 0, x_0=0, y_0=0, x_n=0, h=0, epsilon=0):
         y_suggestion = y_values[-3] + 4 * h / 3 * (2 * f(x_values[-3], y_values[-3]) - f(x_values[-2], y_values[-2]) + 2 * f(x_values[-1], y_values[-1]))
         y_corrected = y_values[-2] + h / 3 * (f(x_values[-2], y_values[-2]) + 4 * f(x_values[-1], y_values[-1]) + f(x, y_suggestion))
 
-        while abs(y_suggestion - y_corrected) > epsilon:
-            y_corrected = y_values[-2] + h / 3 * (f(x_values[-2], y_values[-2]) + 4 * f(x_values[-1], y_values[-1]) + f(x, y_corrected))
-
         x_values.append(x)
         y_values.append(y_corrected)
 
