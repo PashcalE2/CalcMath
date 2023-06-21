@@ -1,5 +1,4 @@
 import math
-from pathlib import Path
 import matplotlib.pyplot as plt
 
 from Labs.Lab6.data.equation import Equation
@@ -82,7 +81,7 @@ class Lab6Command(AnyCommand):
         plt.plot(x_values, [true_y(x, C) for x in x_values], c="black", label="Точное решение")
 
         plt.plot([x_0 + euler_h * i for i in range(len(euler_y_values))], euler_y_values, c="red", label="Метод Эйлера")
-        plt.plot([x_0 + runge_kutta_h * i for i in range(len(runge_kutta_y_values))], runge_kutta_y_values, c="red", label="Метод Рунге-Кутта(4го порядка)")
+        plt.plot([x_0 + runge_kutta_h * i for i in range(len(runge_kutta_y_values))], runge_kutta_y_values, c="green", label="Метод Рунге-Кутта(4го порядка)")
         plt.plot(milne_x_values, milne_y_values, c="blue", label="Метод Милна")
 
         plt.legend()
